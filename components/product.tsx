@@ -26,9 +26,15 @@ const Product = ({ product }: props) => {
       </div>
       <div className="mb-3 text-xs text-gray-400">{product.brandName}</div>
       <div className="mb-7 whitespace-normal text-sm">{product.goodsName}</div>
-      <div className="flex">
+      <div className="mb-6 flex space-x-2">
         <strong>{product.benefitPrice.toLocaleString("kr") + "원"}</strong>
+        {product.dcRate !== 0 && (
+          <strong className="text-stone-300">
+            {product.tagPrice.toLocaleString("kr") + "원"}
+          </strong>
+        )}
       </div>
+      {/* <div className="text-xs text-stone-400">{product.sizeInfo && "라스트피스"}</div> */}
     </div>
   );
 };

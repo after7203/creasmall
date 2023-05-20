@@ -36,11 +36,14 @@ export default function Home() {
         goodsName
         brandName
         benefitPrice
-        genderCode
+        tagPrice
+        sizeInfo
       }
     }
   `;
-  const { loading, error, data } = useQuery(GET_PRODUCTS);
+  const { loading, error, data } = useQuery(GET_PRODUCTS, {
+    variables: { genderCode: "F" },
+  });
 
   useEffect(() => {
     console.log(data);
