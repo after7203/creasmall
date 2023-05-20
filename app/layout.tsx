@@ -9,7 +9,7 @@ import Head from "next/head";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const client = new ApolloClient({
-    uri: "http://localhost:3000/api/products",
+    uri: "/api/products",
     cache: new InMemoryCache(),
   });
   return (
