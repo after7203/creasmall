@@ -9,7 +9,7 @@ export type TypeProduct = {
   dcRate: number;
   genderCode: string;
   goodsTagName: string;
-  brandNo: number;
+  brandNo: string;
   sizeInfo: string;
   thumbnail1: string;
   thumbnail2: string;

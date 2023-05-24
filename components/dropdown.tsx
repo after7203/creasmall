@@ -5,12 +5,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 interface props {
   default_name: string;
-  list: string[];
-  state: string;
+  map: Map<string, string>;
   setter: Dispatch<SetStateAction<string>>;
 }
 
-const Dropdown = ({ default_name, list, state, setter }: props) => {
+const Dropdown = ({ default_name, map, setter }: props) => {
+  const [select, setselect] = useState<string>(default_name);
   const [open, setopen] = useState<boolean>(false);
   const ref_dropdown = useClickOutside(() => setopen(false));
   return (
@@ -20,7 +20,7 @@ const Dropdown = ({ default_name, list, state, setter }: props) => {
         onClick={() => setopen((state) => !state)}
       >
         <div className="font-bold">
-          {state === "전체" ? default_name : state}
+          {select === "전체" ? default_name : select}
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,16 +39,17 @@ const Dropdown = ({ default_name, list, state, setter }: props) => {
       </div>
       <div className={`absolute w-full ${!open && "hidden"}`}>
         <div className="flex flex-col border bg-white px-4 py-2">
-          {list.map((el) => (
+          {Array.from(map.entries()).map(([label, value]) => (
             <div
               className={`items-center justify-between py-2 text-xs hover:cursor-pointer hover:font-bold`}
-              key={el}
+              key={label}
               onClick={() => {
-                setter(el);
+                setter(value);
+                setselect(label);
                 setopen(false);
               }}
             >
-              {el}
+              {label}
             </div>
           ))}
         </div>

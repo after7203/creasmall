@@ -4,9 +4,45 @@ import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { gql } from "graphql-tag";
 import { NextRequest } from "next/server";
 
+interface QueryProductsArgs {
+  genderCode: string;
+  brandNo: string;
+  colorCode: string;
+  seasonCode: string;
+  sort: string;
+}
+
 const resolvers = {
   Query: {
-    products: () => products.data.dataList,
+    products: (
+      _: any,
+      { genderCode, brandNo, colorCode, seasonCode, sort }: QueryProductsArgs
+    ) =>
+      products.data.dataList
+        .filter(
+          (el) =>
+            (genderCode === "all" || el.genderCode === genderCode) &&
+            (brandNo === "all" || el.brandNo === brandNo) &&
+            (colorCode === "all" || el.colorCode === colorCode) &&
+            (seasonCode === "all" || el.seasonCode === seasonCode)
+        )
+        .sort((a, b) => {
+          if (sort === "new") {
+            return a.registerDate < b.registerDate
+              ? 1
+              : a.registerDate > b.registerDate
+              ? -1
+              : 0;
+          } else if (sort === "low") {
+            return a.benefitPrice - b.benefitPrice;
+          } else if (sort === "high") {
+            return -(a.benefitPrice - b.benefitPrice);
+          } else if (sort === "popular") {
+            return -(a.soldQuantity - b.soldQuantity);
+          } else {
+            return 0;
+          }
+        }),
   },
 };
 
@@ -22,7 +58,7 @@ const typeDefs = gql`
     dcRate: Float
     genderCode: String
     goodsTagName: String
-    brandNo: Int
+    brandNo: String
     sizeInfo: String
     thumbnail1: String
     thumbnail2: String
@@ -37,7 +73,13 @@ const typeDefs = gql`
     soldQuantity: Int
   }
   type Query {
-    products: [Product]
+    products(
+      genderCode: String
+      brandNo: String
+      colorCode: String
+      seasonCode: String
+      sort: String
+    ): [Product]
   }
 `;
 
