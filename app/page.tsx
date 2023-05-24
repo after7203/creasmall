@@ -6,10 +6,11 @@ import Product from "@/components/product";
 import { TypeProduct } from "@/types";
 import { useEffect, useState } from "react";
 import { gql, useQuery, useReactiveVar } from "@apollo/client";
-import { applyCategory } from "@/store";
+import { applyCategory, applySearch } from "@/store";
 
 export default function Home() {
   const category = useReactiveVar(applyCategory);
+  const search = useReactiveVar(applySearch);
   const [map_brand, setmap_brand] = useState<Map<string, string>>(
     new Map<string, string>([["전체", "all"]])
   );
@@ -54,6 +55,7 @@ export default function Home() {
       $colorCode: String
       $seasonCode: String
       $sort: String
+      $search: String
     ) {
       products(
         genderCode: $genderCode
@@ -61,6 +63,7 @@ export default function Home() {
         colorCode: $colorCode
         seasonCode: $seasonCode
         sort: $sort
+        search: $search
       ) {
         thumbnail1
         thumbnail2
@@ -80,6 +83,7 @@ export default function Home() {
       colorCode,
       seasonCode,
       sort,
+      search,
     },
   });
 
@@ -95,10 +99,10 @@ export default function Home() {
     }
   }, [loading]);
 
-  if (error) console.log(console.log(JSON.stringify(error, null, 2)));
+  if (error) console.log(JSON.stringify(error, null, 2));
 
   return (
-    <>
+    <div className="min-[1400px]:w-[1400px]">
       <Header />
       <main className="px-16 py-10">
         <div className="mb-16 flex justify-center space-x-3 text-3xl">
@@ -150,6 +154,6 @@ export default function Home() {
           </ul>
         </section>
       </main>
-    </>
+    </div>
   );
 }

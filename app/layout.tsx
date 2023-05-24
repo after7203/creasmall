@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Head>
         <title>크리스몰</title>
       </Head>
-      <body className="whitespace-nowrap">
+      <body className="w-100vw flex flex-col whitespace-nowrap items-center">
         <ApolloProvider client={client}>{children}</ApolloProvider>
       </body>
     </html>

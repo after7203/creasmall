@@ -10,13 +10,21 @@ interface QueryProductsArgs {
   colorCode: string;
   seasonCode: string;
   sort: string;
+  search: string;
 }
 
 const resolvers = {
   Query: {
     products: (
       _: any,
-      { genderCode, brandNo, colorCode, seasonCode, sort }: QueryProductsArgs
+      {
+        genderCode,
+        brandNo,
+        colorCode,
+        seasonCode,
+        sort,
+        search,
+      }: QueryProductsArgs
     ) =>
       products.data.dataList
         .filter(
@@ -24,7 +32,10 @@ const resolvers = {
             (genderCode === "all" || el.genderCode === genderCode) &&
             (brandNo === "all" || el.brandNo === brandNo) &&
             (colorCode === "all" || el.colorCode === colorCode) &&
-            (seasonCode === "all" || el.seasonCode === seasonCode)
+            (seasonCode === "all" || el.seasonCode === seasonCode) &&
+            (el.brandName.includes(search) ||
+              el.goodsName.includes(search) ||
+              el.goodsCode.includes(search))
         )
         .sort((a, b) => {
           if (sort === "new") {
@@ -79,6 +90,7 @@ const typeDefs = gql`
       colorCode: String
       seasonCode: String
       sort: String
+      search: String
     ): [Product]
   }
 `;
