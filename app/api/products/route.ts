@@ -4,9 +4,15 @@ import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { gql } from "graphql-tag";
 import { NextRequest } from "next/server";
 
+interface QueryProductsArgs {
+  page: number;
+  limit: number;
+}
+
 const resolvers = {
   Query: {
-    products: () => products.data.dataList,
+    products: (_: any, { page, limit }: QueryProductsArgs) =>
+      products.data.dataList.slice(page * limit, (page + 1) * limit),
   },
 };
 
@@ -37,7 +43,7 @@ const typeDefs = gql`
     soldQuantity: Int
   }
   type Query {
-    products: [Product]
+    products(page: Int, limit: Int): [Product]
   }
 `;
 

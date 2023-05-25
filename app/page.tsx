@@ -5,11 +5,13 @@ import Header from "@/components/header";
 import Product from "@/components/product";
 import { TypeProduct } from "@/types";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import { applyCategory } from "@/store";
 
 export default function Home() {
+  const [products, setproducts] = useState<TypeProduct[]>([]);
+  const pageRef = useRef<number>(0);
   const category = useReactiveVar(applyCategory);
   const [list_brand, setlist_brand] = useState<string[]>([]);
   const [brand, setbrand] = useState<string>("전체");
@@ -29,8 +31,8 @@ export default function Home() {
   const [sort, setsort] = useState<string>("신상품순");
 
   const GET_PRODUCTS = gql`
-    query GetProducts {
-      products {
+    query GetProducts($page: Int, $limit: Int) {
+      products(page: $page, limit: $limit) {
         thumbnail1
         thumbnail2
         goodsName
@@ -41,7 +43,14 @@ export default function Home() {
       }
     }
   `;
-  const { loading, error, data } = useQuery(GET_PRODUCTS);
+  const { loading, error, data } = useQuery(GET_PRODUCTS, {
+    variables: {
+      page: pageRef.current,
+      limit: 20,
+    },
+  });
+
+  if (error) console.log(JSON.stringify(error, null, 2));
 
   useEffect(() => {
     console.log(data);
@@ -59,7 +68,9 @@ export default function Home() {
       );
     }
   }, [loading]);
-  
+
+  useEffect(() => {}, [category]);
+
   if (error) return `Error! ${error}`;
 
   return (
@@ -109,13 +120,11 @@ export default function Home() {
         </section>
         <section>
           <ul className="grid grid-cols-4 gap-x-8 gap-y-32 max-[768px]:grid-cols-2">
-            {!loading &&
-              data &&
-              (data.products as TypeProduct[]).map((product) => (
-                <li className="" key={product.goodsCode}>
-                  <Product product={product} />
-                </li>
-              ))}
+            {products.map((product) => (
+              <li className="" key={product.goodsCode}>
+                <Product product={product} />
+              </li>
+            ))}
           </ul>
         </section>
       </main>
